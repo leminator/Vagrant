@@ -1,0 +1,39 @@
+---
+- name: deploy
+  hosts: all
+  connection: local
+  gather_facts: false
+  become: true
+  tasks:
+    - name: create user
+      user:
+        name: Zachary
+        state: present
+        shell: /bin/bash
+        password: 'Cybersecurity'
+        update_password: on_create
+    - name: sshd password
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication '
+        insertafter: '#PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+      notify: restart_sshd
+    - name: sudo
+      copy:
+        dest: /etc/sudoers.d/Zachary
+        content: "Zachary ALL=(root) NOPASSWD: ALL"
+    - name: deploy nginx docker container
+      docker_container:
+        image: nginx:stable
+        name: nginx
+        state: started
+        auto_remove: true
+        ports:
+          - "8080:80"
+  handlers:
+    - name: restart_sshd
+      service:
+        name: sshd
+        state: restarted
+               

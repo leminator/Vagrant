@@ -7,10 +7,10 @@
   tasks:
     - name: create user
       user:
-        name: Zachary
+        name: Username
         state: present
         shell: /zsh
-        password: 'Cybersecurity'
+        password: 'Password'
         update_password: on_create
     - name: sshd password
       lineinfile:
@@ -21,8 +21,8 @@
       notify: restart_sshd
     - name: sudo
       copy:
-        dest: /etc/sudoers.d/Zachary
-        content: "Zachary ALL=(root) NOPASSWD: ALL"
+        dest: /etc/sudoers.d/username
+        content: "Username ALL=(root) NOPASSWD: ALL"
   handlers:
     - name: restart_sshd
       service:
